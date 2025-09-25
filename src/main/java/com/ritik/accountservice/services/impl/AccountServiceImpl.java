@@ -1,10 +1,13 @@
 package com.ritik.accountservice.services.impl;
 
 import com.ritik.accountservice.constants.AccountConstants;
+import com.ritik.accountservice.dto.AccountDTO;
 import com.ritik.accountservice.dto.CustomerDTO;
 import com.ritik.accountservice.entity.Account;
 import com.ritik.accountservice.entity.Customer;
 import com.ritik.accountservice.exception.CustomerAlreadyExistsException;
+import com.ritik.accountservice.exception.ResourceNotFoundException;
+import com.ritik.accountservice.mapper.AccountMapper;
 import com.ritik.accountservice.mapper.CustomerMapper;
 import com.ritik.accountservice.repository.AccountRepository;
 import com.ritik.accountservice.repository.CustomerRepository;
@@ -13,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,6 +45,7 @@ public class AccountServiceImpl implements IAccountService {
     /**
      * @param customer - Customer Object
      * @return the new account details
+     * TODO: Created Properties (createdAt, createdBy)
      */
     private Account createNewAccount(Customer customer) {
         Account account = new Account();
@@ -50,5 +55,17 @@ public class AccountServiceImpl implements IAccountService {
         account.setAccountType(AccountConstants.SAVINGS);
         account.setBranchAddress(AccountConstants.ADDRESS);
         return account;
+    }
+
+    @Override
+    public CustomerDTO fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
+
+        Account account = accountRepository.findByCustomerId(customer.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Account", "mobileNumber", mobileNumber));
+        CustomerDTO customerDTO = CustomerMapper.mapToCustomerDTO(customer, new CustomerDTO());
+        customerDTO.setAccount(AccountMapper.toAccountDTO(account, new AccountDTO()));
+        return customerDTO;
     }
 }
