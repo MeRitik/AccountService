@@ -35,9 +35,6 @@ public class AccountServiceImpl implements IAccountService {
         }
 
         Customer customer = CustomerMapper.mapToCustomer(customerDTO, new Customer());
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("Anonymous");
-
         Customer savedCustomer = customerRepository.save(customer);
         accountRepository.save(createNewAccount(savedCustomer));
     }
@@ -45,7 +42,6 @@ public class AccountServiceImpl implements IAccountService {
     /**
      * @param customer - Customer Object
      * @return the new account details
-     * TODO: Created Properties (createdAt, createdBy)
      */
     private Account createNewAccount(Customer customer) {
         Account account = new Account();
