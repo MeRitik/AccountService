@@ -4,21 +4,25 @@ import com.ritik.accountservice.constants.AccountConstants;
 import com.ritik.accountservice.dto.CustomerDTO;
 import com.ritik.accountservice.dto.ResponseDTO;
 import com.ritik.accountservice.services.IAccountService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
+@Validated
 public class AccountController {
 
     private IAccountService accountService;
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> createAccount(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
 
         accountService.createAccount(customerDTO);
 
@@ -28,16 +32,35 @@ public class AccountController {
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<CustomerDTO> fetchAccountDetails(@RequestParam String mobileNumber) {
+    public ResponseEntity<CustomerDTO> fetchAccountDetails(@RequestParam
+                                                               @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
+                                                               String mobileNumber) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(accountService.fetchAccount(mobileNumber));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseDTO> updateAccountDetails(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> updateAccountDetails(@Valid @RequestBody CustomerDTO customerDTO) {
         boolean isUpdated = accountService.updateAccount(customerDTO);
 
         if (isUpdated) {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new ResponseDTO(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO(AccountConstants.STATUS_500, AccountConstants.MESSAGE_500));
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDTO> deleteAccountDetails(@RequestParam
+                                                                @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
+                                                                String mobileNumber) {
+        boolean isDeleted = accountService.deleteAccount(mobileNumber);
+
+        if (isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(new ResponseDTO(AccountConstants.STATUS_200, AccountConstants.MESSAGE_200));
