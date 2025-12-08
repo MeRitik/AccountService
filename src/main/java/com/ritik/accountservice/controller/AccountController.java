@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 @Tag(
         name = "CRUD REST APIs for Account",
@@ -31,6 +34,9 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private IAccountService accountService;
+
+    @Value("${build.version}")
+    private String buildVersion;
 
     @Operation(
             summary = "Create Account REST API",
@@ -78,8 +84,8 @@ public class AccountController {
     })
     @GetMapping("/fetch")
     public ResponseEntity<CustomerDTO> fetchAccountDetails(@RequestParam
-                                                               @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
-                                                               String mobileNumber) {
+                                                           @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
+                                                           String mobileNumber) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(accountService.fetchAccount(mobileNumber));
     }
@@ -143,8 +149,8 @@ public class AccountController {
     })
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDTO> deleteAccountDetails(@RequestParam
-                                                                @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
-                                                                String mobileNumber) {
+                                                            @Pattern(regexp = "^$|^[0-9]{10}$", message = "Please provide a valid mobile number")
+                                                            String mobileNumber) {
         boolean isDeleted = accountService.deleteAccount(mobileNumber);
 
         if (isDeleted) {
@@ -156,5 +162,28 @@ public class AccountController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDTO(AccountConstants.STATUS_417, AccountConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(
+            summary = "Get Build information",
+            description = "Get Build information that is deployed into accounts microservice"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDTO.class)
+                    )
+            )
+    })
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+        return ResponseEntity
+                .ok(buildVersion);
     }
 }
