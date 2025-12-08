@@ -22,3 +22,12 @@ spring:
 
 build:
   version: "1.0"
+
+accounts:
+  message: "Welcome to Bank accounts related local APIs"
+  contactDetails:
+    name: "Ritik Ranjan"
+    email: "ritikranjan999@gmail.com"
+  onCallSupport:
+    - +919876543210
+    - +919087654321
