@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+accounts:
+  message: "Welcome to QA Environment - Bank Account Services"
+  contactDetails:
+    name: "QA Manager"
+    email: "qa.support@bank.com"
+  onCallSupport:
+    - +91-000-0000000
+    - +91-111-1111111
