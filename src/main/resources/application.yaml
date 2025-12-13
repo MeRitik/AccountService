@@ -2,9 +2,6 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: account-service
-
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -20,23 +17,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  application:
+    name: accounts
+
   config:
-    import:
-      - "application_qa.yaml"
-      - "application_prod.yaml"
+    import: "optional:configserver:http://localhost:8071"
 
   profiles:
-    active:
-      - "qa"
-
-build:
-  version: "3.0"
-
-accounts:
-  message: "Welcome to Bank accounts related local APIs"
-  contactDetails:
-    name: "Ritik Ranjan"
-    email: "ritikranjan999@gmail.com"
-  onCallSupport:
-    - +919876543210
-    - +919087654321
+    active: prod
