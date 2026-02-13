@@ -1,6 +1,7 @@
 package com.ritik.accountservice.mapper;
 
 import com.ritik.accountservice.dto.CustomerDTO;
+import com.ritik.accountservice.dto.CustomerDetailsDto;
 import com.ritik.accountservice.entity.Customer;
 
 public class CustomerMapper {
@@ -17,5 +18,12 @@ public class CustomerMapper {
         customer.setEmail(customerDTO.getEmail());
         customer.setMobileNumber(customerDTO.getMobileNumber());
         return customer;
+    }
+
+    public static CustomerDetailsDto mapToCustomerDetailsDto(Customer customer, CustomerDetailsDto customerDetailsDto) {
+        customerDetailsDto.setName(customer.getName());
+        customerDetailsDto.setEmail(customer.getEmail());
+        customerDetailsDto.setMobileNumber(customer.getMobileNumber());
+        return customerDetailsDto;
     }
 }
