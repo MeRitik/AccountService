@@ -53,3 +53,9 @@ info:
     name: "accounts"
     description: "Bank Accounts Application"
     version: "2.1.1"
+
+logging:
+  level:
+    com:
+      ritik:
+        accountservice: DEBUG
