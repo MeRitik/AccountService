@@ -236,7 +236,6 @@ public class AccountController {
     })
     @GetMapping("/contact-info")
     public ResponseEntity<AccountsContactInfoDTO> getContactInfo() {
-        System.out.println(accountsContactInfoDTO);
         return ResponseEntity
                 .ok(accountsContactInfoDTO);
     }
