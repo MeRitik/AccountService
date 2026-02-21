@@ -26,6 +26,12 @@ spring:
   profiles:
     active: prod
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
+
 management:
   endpoints:
     web:
@@ -59,3 +65,12 @@ logging:
     com:
       ritik:
         accountservice: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        permitted-number-of-calls-in-half-open-state: 2
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000
